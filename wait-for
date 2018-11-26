@@ -21,8 +21,12 @@ USAGE
 
 wait_for() {
   for i in `seq $TIMEOUT` ; do
-    nc -z "$HOST" "$PORT" > /dev/null 2>&1
-    
+    if which nc > /dev/null; then
+      nc -z "$HOST" "$PORT" > /dev/null 2>&1
+    else
+      (echo > /dev/tcp/$HOST/$PORT) > /dev/null 2>&1
+    fi
+
     result=$?
     if [ $result -eq 0 ] ; then
       if [ $# -gt 0 ] ; then
